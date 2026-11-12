@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohammad Ghorer Bazar</title>
+<style>
+:root{--green:#087f5b;--dark:#12352b;--cream:#f6fbf7;--orange:#ffb703}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:var(--cream);color:#18352b}
+header{background:var(--green);color:white;padding:16px 5%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}.logo{width:45px;height:45px;border-radius:14px;background:white;color:var(--green);display:grid;place-items:center;font-size:25px}
+header small{display:block;font-size:12px;font-weight:400;margin-top:3px}
+nav a{color:white;text-decoration:none;margin-left:15px;font-weight:600}
+.hero{padding:42px 5%;background:linear-gradient(120deg,#dff5e8,#fff4d6);text-align:center}
+.hero h1{font-size:clamp(28px,5vw,44px);margin:0 0 10px;color:var(--dark)}.hero p{margin:0 0 20px}
+.search{width:min(560px,100%);padding:14px;border:1px solid #cbd8cf;border-radius:12px;font-size:16px}
+.wrap{max-width:1100px;margin:auto;padding:28px 5%}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:18px}
+.card{background:white;border:1px solid #e0e9e2;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px #12352b0b}
+.product-image{height:145px;background:#eaf5ed;display:grid;place-items:center;font-size:64px}
+.card-content{padding:15px}.card h3{margin:0 0 8px}.price{font-weight:800;color:var(--green);font-size:18px;margin:8px 0 13px}
+button{border:0;border-radius:10px;padding:11px 14px;background:var(--green);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#e8f4ec;color:var(--dark)}button:hover{filter:brightness(.95)}
+.cart{background:white;padding:18px;border-radius:16px;border:1px solid #e0e9e2}
+.cart-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf1ee}
+footer{background:var(--dark);color:white;text-align:center;padding:24px 5%;margin-top:30px}
+.note{font-size:13px;color:#63746a;line-height:1.5}
+@media(max-width:520px){nav a{margin:0 10px 0 0}.brand{font-size:17px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">🛍️</div><div>Mohammad Ghorer Bazar<small>Best quality product</small></div></div>
+  <nav><a href="#products">পণ্য</a><a href="#cart">কার্ট</a></nav>
+</header>
+<section class="hero">
+  <h1>ঘরের বাজার, এখন অনলাইনে!</h1>
+  <p>আপনার প্রয়োজনীয় পণ্য সহজেই বেছে নিন।</p>
+  <input id="search" class="search" type="search" placeholder="পণ্যের নাম লিখে খুঁজুন..." oninput="renderProducts()">
+</section>
+<main class="wrap">
+  <div class="section-head"><h2 id="products">আমাদের পণ্য</h2><span class="note">নমুনা পণ্য — নিজের পণ্য দিয়ে বদলে নিন</span></div>
+  <div id="productList" class="products"></div>
+  <section id="cart" style="margin-top:32px">
+    <h2>আপনার শপিং কার্ট</h2>
+    <div class="cart">
+      <div id="cartItems">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
+      <h3 id="total">মোট: ৳০</h3>
+      <button onclick="orderWhatsApp()">WhatsApp-এ অর্ডার করুন</button>
+      <p class="note">অর্ডার চালু করতে নিচের কোডে আপনার WhatsApp নম্বর বসাতে হবে। নম্বরটি দেশের কোডসহ লিখবেন, যেমন 8801XXXXXXXXX।</p>
+    </div>
+  </section>
+</main>
+<footer>© 2026 Mohammad Ghorer Bazar · ধন্যবাদ আমাদের সঙ্গে থাকার জন্য</footer>
+<script>
+const products = [
+ {id:1,name:"চাল (নমুনা)",price:70,emoji:"🍚"},
+ {id:2,name:"ডাল (নমুনা)",price:110,emoji:"🫘"},
+ {id:3,name:"রান্নার তেল (নমুনা)",price:180,emoji:"🫗"},
+ {id:4,name:"সাবান (নমুনা)",price:45,emoji:"🧼"},
+ {id:5,name:"বিস্কুট (নমুনা)",price:30,emoji:"🍪"},
+ {id:6,name:"চা (নমুনা)",price:120,emoji:"🍵"}
+];
+let cart=[];
+function money(n){return "৳"+n.toLocaleString("bn-BD")}
+function renderProducts(){
+ const q=document.getElementById("search").value.trim().toLowerCase();
+ const shown=products.filter(p=>p.name.toLowerCase().includes(q));
+ document.getElementById("productList").innerHTML=shown.map(p=>`
+ <article class="card"><div class="product-image">${p.emoji}</div><div class="card-content">
+ <h3>${p.name}</h3><div class="price">${money(p.price)}</div>
+ <button onclick="addToCart(${p.id})">কার্টে যোগ করুন</button></div></article>`).join("") || "<p>কোনো পণ্য পাওয়া যায়নি।</p>";
+}
+function addToCart(id){const item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});renderCart()}
+function changeQty(id,delta){const item=cart.find(x=>x.id===id);if(!item)return;item.qty+=delta;if(item.qty<=0)cart=cart.filter(x=>x.id!==id);renderCart()}
+function renderCart(){
+ const el=document.getElementById("cartItems");
+ if(!cart.length){el.textContent="এখনো কোনো পণ্য যোগ করা হয়নি।";document.getElementById("total").textContent="মোট: ৳০";return}
+ let total=0;el.innerHTML=cart.map(x=>{const p=products.find(y=>y.id===x.id);total+=p.price*x.qty;return `<div class="cart-row"><span>${p.name} × ${x.qty}</span><span>${money(p.price*x.qty)} <button class="secondary" onclick="changeQty(${p.id},-1)">−</button> <button class="secondary" onclick="changeQty(${p.id},1)">+</button></span></div>`}).join("");
+ document.getElementById("total").textContent="মোট: "+money(total);
+}
+function orderWhatsApp(){
+ if(!cart.length){alert("আগে কার্টে পণ্য যোগ করুন।");return}
+ const phone="8801XXXXXXXXX"; // এখানে নিজের WhatsApp নম্বর বসান
+ if(phone.includes("X")){alert("অর্ডার চালু করতে index.html ফাইলে phone-এর জায়গায় নিজের WhatsApp নম্বর বসান।");return}
+ let lines=cart.map(x=>{const p=products.find(y=>y.id===x.id);return `${p.name} x ${x.qty} = ${p.price*x.qty} টাকা`});
+ const total=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
+ const msg="আসসালামু আলাইকুম, আমি অর্ডার করতে চাই:\n"+lines.join("\n")+"\nমোট: "+total+" টাকা";
+ window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg),"_blank");
+}
+renderProducts();renderCart();
+</script>
+</body>
+</html>
